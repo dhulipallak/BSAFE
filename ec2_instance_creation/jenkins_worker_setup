@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Function to setup java in worker nodes
+
+setup_java()
+{
+    sudo apt-get --yes --force-yes update
+
+    if [ $? -eq "0" ]
+    then
+        echo "Ubuntu packages updated successfully"
+    else
+        echo "Ubuntu package update failed please check, exiting"
+        exit 1
+    fi
+
+    sudo apt --yes --force-yes install openjdk-11-jre-headless
+
+    if [ $? -eq "0" ]
+    then
+        echo "Java installation completed successfully"
+    else
+        echo "Fatal java installation failed"
+        exit 1
+    fi
+
+}
+
+
+
+setup_user ()
+{
+    sudo useradd -U -m -s /bin/bash jenkins
+
+    sudo passwd jenkins
+
+    su -c "mkdir /home/jenkins/.ssh" jenkins
+
+    sudo chmod 777 /home/jenkins/.ssh
+    
+}
+
+# Function calls in-order
+
+setup_java
+setup_user
+
+
+
+
+
