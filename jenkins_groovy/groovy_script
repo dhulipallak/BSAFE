@@ -1,0 +1,37 @@
+pipeline{
+	agent any
+	stages {
+        
+		stage ('GET SOURCE CODE'){
+			steps {
+				checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/ankitchanpuria/kubernetes_wordpress.git']]])
+			}
+			
+		}
+		stage ('RUN DOCKER'){
+			steps {
+				sh '/root/jenkins_docker_pipeline/wrapper.sh run_docker'
+			}
+			
+		}
+		stage ('STAGE APP CODE'){
+			steps {
+				sh '/root/jenkins_docker_pipeline/wrapper.sh stage_app_code'
+			}
+			
+		}
+		stage ('BUILD DOCKER IMAGE'){
+			steps {
+				sh '/root/jenkins_docker_pipeline/wrapper.sh docker_image_build'
+			}
+			
+		}
+		stage ('BUILD DOCKER IMAGE CONTAINER'){
+			steps {
+				sh '/root/jenkins_docker_pipeline/wrapper.sh docker_image_container'
+			}
+			
+		}
+	}
+}
+cleanWs()
